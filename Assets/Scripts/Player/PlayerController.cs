@@ -9,16 +9,30 @@ public class PlayerController : MonoBehaviour
     public PlayerInputController inputControl;
     private Rigidbody2D rb;
     private PhysicsCheck physicsCheck;
+    private CapsuleCollider2D coll;
     [Header("基础信息")]
     public Vector2 InputDirection;
     public float speed;
     public float jumpForce;
+
+    //下蹲部分(暂未实现)
+    public bool isCrouch;
+    private Vector2 originalOffset;
+    private Vector2 originalSize;
+
+    //受击反弹
+    public float hurtForce;
+    public bool isHurt;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         inputControl = new PlayerInputController();
         physicsCheck = GetComponent<PhysicsCheck>();
+        coll = GetComponent<CapsuleCollider2D>();
+
+        originalOffset = coll.offset;
+        originalSize = coll.size;
 
         inputControl.Gameplay.Jump.started += Jump;
     }
@@ -45,15 +59,20 @@ public class PlayerController : MonoBehaviour
     //与物理相关的要放到FixedUpdate中
     private void FixedUpdate()
     {
-        Move();
+        if (!isHurt)
+        {
+            Move();
+        }
 
     }
 
     private void Move()
     {
-
-        //更改刚体的移动可以不用deltaTime，而TransForm则需要
-        rb.velocity = new Vector2(speed * Time.deltaTime * InputDirection.x, rb.velocity.y);
+        if (!isCrouch)
+        {
+            //更改刚体的移动可以不用deltaTime，而TransForm则需要
+            rb.velocity = new Vector2(speed * Time.deltaTime * InputDirection.x, rb.velocity.y);
+        }
 
         int faceDir = (int)transform.localScale.x;
 
@@ -68,6 +87,19 @@ public class PlayerController : MonoBehaviour
         //不用else是因为InputDirection.x可能为0，导致人物面朝同一方向
 
         transform.localScale = new Vector3(faceDir, 1, 1);
+
+        //下蹲
+        isCrouch = InputDirection.y < -0.5f && physicsCheck.isGrounded;
+        if (isCrouch)
+        {
+            coll.offset = new Vector2(-0.05f, 0.85f);
+            coll.size = new Vector2(0.7f, 1.7f);
+        }
+        else
+        {
+            coll.size = originalSize;
+            coll.offset = originalOffset;
+        }
     }
 
     private void Jump(InputAction.CallbackContext obj)
@@ -76,4 +108,13 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse); //施加一个向上瞬时的力
     }
 
+    public void GetHurt(Transform attacker)
+    {
+        isHurt = true;
+        rb.velocity = Vector2.zero; //让人物停下来
+        //方向计算的话，用当前人物坐标的x，减去攻击者坐标的x
+        Vector2 dir = new Vector2((transform.position.x - attacker.position.x), 0).normalized;  //数值归一化，因为距离的远近会导致力的大小不一样
+
+        rb.AddForce(dir * hurtForce, ForceMode2D.Impulse);
+    }
 }

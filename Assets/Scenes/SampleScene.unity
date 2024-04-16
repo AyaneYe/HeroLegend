@@ -1245,6 +1245,9 @@ MonoBehaviour:
   CurrentHealth: 0
   invincibleTime: 0
   invincible: 0
+  onTakeDamage:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1203761730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4316,6 +4319,9 @@ MonoBehaviour:
   InputDirection: {x: 0, y: 0}
   speed: 500
   jumpForce: 16.5
+  isCrouch: 0
+  hurtForce: 5
+  isHurt: 0
 --- !u!114 &1758866169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4379,10 +4385,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd6832fbec093db448422ee25974beff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHealth: 5
+  MaxHealth: 100
   CurrentHealth: 0
   invincibleTime: 2
   invincible: 0
+  onTakeDamage:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1758866171}
+        m_TargetAssemblyTypeName: PlayerAnimation, Assembly-CSharp
+        m_MethodName: PlayerHurt
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1758866168}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: GetHurt
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2132752837
 GameObject:
   m_ObjectHideFlags: 0

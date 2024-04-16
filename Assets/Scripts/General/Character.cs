@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Character : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class Character : MonoBehaviour
     public float invincibleTime;
     private float invincibleCounter;
     public bool invincible;
+
+    public UnityEvent<Transform> onTakeDamage;
 
     private void Start()
     {
@@ -39,6 +42,8 @@ public class Character : MonoBehaviour
         {
             CurrentHealth -= attacker.damage;
             triggerInvincible();
+            // 触发受伤事件
+            onTakeDamage?.Invoke(attacker.transform);
         }
         else
         {

@@ -28,5 +28,12 @@ public class PlayerAnimation : MonoBehaviour
         anim.SetFloat("velocityY", rb.velocity.y);
         anim.SetBool("isGround", physicsCheck.isGrounded);
         anim.SetFloat("Speed", playerController.speed);
+        anim.SetBool("isCrouch", playerController.isCrouch);
+    }
+
+    //Update只能单词执行，需拆分出来
+    public void PlayerHurt()
+    {
+        anim.SetTrigger("hurt");
     }
 }
