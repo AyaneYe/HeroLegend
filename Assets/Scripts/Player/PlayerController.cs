@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
     //受击反弹
     public float hurtForce;
     public bool isHurt;
+    public bool isDead;
 
     private void Awake()
     {
@@ -116,5 +117,11 @@ public class PlayerController : MonoBehaviour
         Vector2 dir = new Vector2((transform.position.x - attacker.position.x), 0).normalized;  //数值归一化，因为距离的远近会导致力的大小不一样
 
         rb.AddForce(dir * hurtForce, ForceMode2D.Impulse);
+    }
+
+    public void PlayerDead()
+    {
+        isDead= true;
+        inputControl.Gameplay.Disable();
     }
 }

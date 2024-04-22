@@ -29,6 +29,7 @@ public class PlayerAnimation : MonoBehaviour
         anim.SetBool("isGround", physicsCheck.isGrounded);
         anim.SetFloat("Speed", playerController.speed);
         anim.SetBool("isCrouch", playerController.isCrouch);
+        anim.SetBool("isDead", playerController.isDead);
     }
 
     //Update只能单词执行，需拆分出来

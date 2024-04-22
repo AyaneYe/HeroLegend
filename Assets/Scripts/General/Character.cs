@@ -14,6 +14,7 @@ public class Character : MonoBehaviour
     public bool invincible;
 
     public UnityEvent<Transform> onTakeDamage;
+    public UnityEvent OnDie;
 
     private void Start()
     {
@@ -48,6 +49,7 @@ public class Character : MonoBehaviour
         else
         {
             CurrentHealth = 0;
+            OnDie?.Invoke();
         }
     }
 
