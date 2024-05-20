@@ -53,6 +53,15 @@ public partial class @PlayerInputController: IInputActionCollection2, IDisposabl
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""95999340-6880-4cf8-9f53-80c227afa767"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -209,6 +218,17 @@ public partial class @PlayerInputController: IInputActionCollection2, IDisposabl
                     ""action"": ""ChangeSpeed"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""621061b9-efb8-4e61-8d98-9f0f25d5a94c"",
+                    ""path"": ""<Keyboard>/j"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -287,6 +307,7 @@ public partial class @PlayerInputController: IInputActionCollection2, IDisposabl
         m_Gameplay_Move = m_Gameplay.FindAction("Move", throwIfNotFound: true);
         m_Gameplay_Jump = m_Gameplay.FindAction("Jump", throwIfNotFound: true);
         m_Gameplay_ChangeSpeed = m_Gameplay.FindAction("ChangeSpeed", throwIfNotFound: true);
+        m_Gameplay_Attack = m_Gameplay.FindAction("Attack", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
     }
@@ -353,6 +374,7 @@ public partial class @PlayerInputController: IInputActionCollection2, IDisposabl
     private readonly InputAction m_Gameplay_Move;
     private readonly InputAction m_Gameplay_Jump;
     private readonly InputAction m_Gameplay_ChangeSpeed;
+    private readonly InputAction m_Gameplay_Attack;
     public struct GameplayActions
     {
         private @PlayerInputController m_Wrapper;
@@ -360,6 +382,7 @@ public partial class @PlayerInputController: IInputActionCollection2, IDisposabl
         public InputAction @Move => m_Wrapper.m_Gameplay_Move;
         public InputAction @Jump => m_Wrapper.m_Gameplay_Jump;
         public InputAction @ChangeSpeed => m_Wrapper.m_Gameplay_ChangeSpeed;
+        public InputAction @Attack => m_Wrapper.m_Gameplay_Attack;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -378,6 +401,9 @@ public partial class @PlayerInputController: IInputActionCollection2, IDisposabl
             @ChangeSpeed.started += instance.OnChangeSpeed;
             @ChangeSpeed.performed += instance.OnChangeSpeed;
             @ChangeSpeed.canceled += instance.OnChangeSpeed;
+            @Attack.started += instance.OnAttack;
+            @Attack.performed += instance.OnAttack;
+            @Attack.canceled += instance.OnAttack;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -391,6 +417,9 @@ public partial class @PlayerInputController: IInputActionCollection2, IDisposabl
             @ChangeSpeed.started -= instance.OnChangeSpeed;
             @ChangeSpeed.performed -= instance.OnChangeSpeed;
             @ChangeSpeed.canceled -= instance.OnChangeSpeed;
+            @Attack.started -= instance.OnAttack;
+            @Attack.performed -= instance.OnAttack;
+            @Attack.canceled -= instance.OnAttack;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -496,6 +525,7 @@ public partial class @PlayerInputController: IInputActionCollection2, IDisposabl
         void OnMove(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnChangeSpeed(InputAction.CallbackContext context);
+        void OnAttack(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private PhysicsCheck physicsCheck;
     private CapsuleCollider2D coll;
+    private PlayerAnimation playerAnimation;
     [Header("基础信息")]
     public Vector2 InputDirection;
     public float speed;
@@ -24,6 +25,7 @@ public class PlayerController : MonoBehaviour
     public float hurtForce;
     public bool isHurt;
     public bool isDead;
+    public bool isAttack;
 
     private void Awake()
     {
@@ -31,12 +33,17 @@ public class PlayerController : MonoBehaviour
         inputControl = new PlayerInputController();
         physicsCheck = GetComponent<PhysicsCheck>();
         coll = GetComponent<CapsuleCollider2D>();
+        playerAnimation = GetComponent<PlayerAnimation>();
 
         originalOffset = coll.offset;
         originalSize = coll.size;
 
         inputControl.Gameplay.Jump.started += Jump;
+
+        //攻击
+        inputControl.Gameplay.Attack.started += PlayerAttack;
     }
+
 
     private void OnEnable()
     {
@@ -109,6 +116,13 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse); //施加一个向上瞬时的力
     }
 
+    private void PlayerAttack(InputAction.CallbackContext context)
+    {
+        playerAnimation.PlayerAttack();
+        isAttack = true;
+    }
+
+
     public void GetHurt(Transform attacker)
     {
         isHurt = true;
@@ -121,7 +135,7 @@ public class PlayerController : MonoBehaviour
 
     public void PlayerDead()
     {
-        isDead= true;
+        isDead = true;
         inputControl.Gameplay.Disable();
     }
 }
