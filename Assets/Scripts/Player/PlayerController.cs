@@ -6,26 +6,31 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    public PlayerInputController inputControl;
+    private PlayerInputController inputControl;
     private Rigidbody2D rb;
     private PhysicsCheck physicsCheck;
     private CapsuleCollider2D coll;
     private PlayerAnimation playerAnimation;
-    [Header("基础信息")]
+    [Header("基础参数")]
     public Vector2 InputDirection;
     public float speed;
     public float jumpForce;
+    public float hurtForce;
 
     //下蹲部分(暂未实现)
-    public bool isCrouch;
     private Vector2 originalOffset;
     private Vector2 originalSize;
 
-    //受击反弹
-    public float hurtForce;
+    [Header("物理材质")]
+    public PhysicsMaterial2D normal;
+    public PhysicsMaterial2D wall;
+
+    [Header("状态")]
     public bool isHurt;
     public bool isDead;
     public bool isAttack;
+    public bool isCrouch;
+
 
     private void Awake()
     {
@@ -62,6 +67,7 @@ public class PlayerController : MonoBehaviour
         {
             speed = speed > 400 ? 300 : 500;
         }
+        StateCheck();
     }
 
     //与物理相关的要放到FixedUpdate中
@@ -137,5 +143,10 @@ public class PlayerController : MonoBehaviour
     {
         isDead = true;
         inputControl.Gameplay.Disable();
+    }
+
+    public void StateCheck()
+    {
+        coll.sharedMaterial = physicsCheck.isGrounded ? normal : wall;
     }
 }
