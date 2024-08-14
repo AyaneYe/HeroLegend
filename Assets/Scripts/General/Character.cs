@@ -13,12 +13,14 @@ public class Character : MonoBehaviour
     private float invincibleCounter;
     public bool invincible;
 
+    public UnityEvent<Character> onHealthChange;
     public UnityEvent<Transform> onTakeDamage;
     public UnityEvent OnDie;
 
     private void Start()
     {
         CurrentHealth = MaxHealth;
+        onHealthChange?.Invoke(this);
     }
 
     private void Update()
@@ -30,6 +32,16 @@ public class Character : MonoBehaviour
             {
                 invincible = false;
             }
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.CompareTag("Water"))
+        {
+            CurrentHealth = 0;
+            onHealthChange?.Invoke(this);
+            OnDie?.Invoke();
         }
     }
 
@@ -51,6 +63,8 @@ public class Character : MonoBehaviour
             CurrentHealth = 0;
             OnDie?.Invoke();
         }
+
+        onHealthChange?.Invoke(this);
     }
 
     //ÎÞµÐ×´Ì¬
