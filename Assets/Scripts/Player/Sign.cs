@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.DualShock;
@@ -12,6 +9,7 @@ public class Sign : MonoBehaviour
     private Animator anim;
     public GameObject signSprite;
     private bool canPress;
+    private IInteractable targetItem;
 
     private void Awake()
     {
@@ -25,6 +23,17 @@ public class Sign : MonoBehaviour
     {
         //订阅事件
         InputSystem.onActionChange += OnActionChange;
+        playerInput.Gameplay.Confirm.started += OnConfirm;
+    }
+
+    private void OnConfirm(InputAction.CallbackContext obj)
+    {
+        if (canPress)
+        {
+            //触发后修改状态
+            targetItem.TriggerAction();
+            canPress = false;
+        }
     }
 
     private void OnActionChange(object obj, InputActionChange actionChange)
@@ -59,6 +68,8 @@ public class Sign : MonoBehaviour
         if (other.CompareTag("Interactable"))
         {
             canPress = true;
+            //获取接口
+            targetItem=other.GetComponent<IInteractable>();
         }
     }
 

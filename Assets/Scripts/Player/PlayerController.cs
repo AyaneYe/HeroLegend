@@ -120,6 +120,7 @@ public class PlayerController : MonoBehaviour
     {
         if (physicsCheck.isGrounded)
             rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse); //施加一个向上瞬时的力
+            GetComponent<AudioDefination>()?.PlayAudioClip();
     }
 
     private void PlayerAttack(InputAction.CallbackContext context)
