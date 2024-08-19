@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class CameraControl : MonoBehaviour
 {
+    public VoidEventSO afterSceneLoadEvent;
     private CinemachineConfiner2D confiner2D;
 
     private void Awake()
@@ -12,10 +13,20 @@ public class CameraControl : MonoBehaviour
         confiner2D = GetComponent<CinemachineConfiner2D>();
     }
 
-    void Start()
+    private void OnEnable()
     {
-        GetCameraBounds();
+        afterSceneLoadEvent.onEventRaised += GetCameraBounds;
     }
+
+    private void OnDisable()
+    {
+        afterSceneLoadEvent.onEventRaised -= GetCameraBounds;
+    }
+
+    //void Start()
+    //{
+    //    GetCameraBounds();
+    //}
 
     void GetCameraBounds()
     {

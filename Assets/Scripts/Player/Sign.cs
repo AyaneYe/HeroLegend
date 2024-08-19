@@ -25,6 +25,10 @@ public class Sign : MonoBehaviour
         InputSystem.onActionChange += OnActionChange;
         playerInput.Gameplay.Confirm.started += OnConfirm;
     }
+    private void OnDisable()
+    {
+        canPress = false;
+    }
 
     private void OnConfirm(InputAction.CallbackContext obj)
     {
@@ -69,7 +73,7 @@ public class Sign : MonoBehaviour
         {
             canPress = true;
             //获取接口
-            targetItem=other.GetComponent<IInteractable>();
+            targetItem = other.GetComponent<IInteractable>();
         }
     }
 

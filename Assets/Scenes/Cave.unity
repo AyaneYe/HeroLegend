@@ -1612,7 +1612,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SceneLoadEventSO: {fileID: 11400000, guid: d7a828d941eb97c4ab1a5fd8137203b1, type: 2}
   SceneToGo: {fileID: 11400000, guid: 3c0c0272d5f2a0c41b1c386331526037, type: 2}
-  PositionToGo: {x: -8.91, y: -1.7, z: 0}
+  PositionToGo: {x: -15.76, y: -11.68, z: 0}
 --- !u!61 &1355344537
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1980,10 +1980,10 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -8.595615, y: 6.580676}
-      - {x: -8.6534195, y: -6.208415}
-      - {x: 11.196565, y: -6.394226}
-      - {x: 11.435023, y: 6.549474}
+    - - {x: -19.31764, y: 8.5274935}
+      - {x: -19.695068, y: -5.7144475}
+      - {x: 11.109393, y: -5.78403}
+      - {x: 10.882944, y: 8.438177}
   m_UseDelaunayMesh: 0
 --- !u!4 &2026334713
 Transform:
