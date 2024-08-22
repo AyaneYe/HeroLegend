@@ -15,12 +15,13 @@ public class SceneLoadManager : MonoBehaviour
     public GameSceneSO firstLoadScene;
     [Header("广播")]
     public VoidEventSO afterSceneLoad;
+    public FadeEventSO fadeEvent;
 
     private GameSceneSO currentLoadScene;
     private GameSceneSO SceneToLoad;
     private Vector3 positionToGo;
     private bool fadeScreen;
-    private float fadeDuration;
+    public float fadeDuration;
     private bool isLoading;
 
     private void Awake()
@@ -79,7 +80,7 @@ public class SceneLoadManager : MonoBehaviour
         //播放过渡动画
         if (fadeScreen)
         {
-            //画面过渡
+            fadeEvent.FadeIn(fadeDuration);
         }
 
         //异步等待并加载
@@ -113,7 +114,7 @@ public class SceneLoadManager : MonoBehaviour
 
         if (fadeScreen)
         {
-            //画面过渡
+            fadeEvent.FadeOut(fadeDuration);
         }
 
         isLoading = false;
