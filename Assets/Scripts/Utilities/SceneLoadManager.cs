@@ -9,13 +9,18 @@ using UnityEngine.SceneManagement;
 public class SceneLoadManager : MonoBehaviour
 {
     public Transform playerTransform;
+    [Header("场景")]
     public Vector3 firstPosition;
+    public Vector3 menuPosition;
+    public GameSceneSO firstLoadScene;
+    public GameSceneSO menuScene;
     [Header("事件监听")]
     public SceneLoadEventSO loadEventSO;
-    public GameSceneSO firstLoadScene;
+    public VoidEventSO newGameEvent;
     [Header("广播")]
     public VoidEventSO afterSceneLoad;
     public FadeEventSO fadeEvent;
+    public SceneLoadEventSO sceneUnloadedEvent;
 
     private GameSceneSO currentLoadScene;
     private GameSceneSO SceneToLoad;
@@ -34,23 +39,27 @@ public class SceneLoadManager : MonoBehaviour
 
     private void Start()
     {
-        NewGame();
+        //NewGame();
+        loadEventSO.RaiseLoadRequestEvent(menuScene, menuPosition, true);
     }
 
     private void OnEnable()
     {
         loadEventSO.LoadRequestEvent += LoadScene;
+        newGameEvent.onEventRaised += NewGame;
     }
 
     private void OnDisable()
     {
         loadEventSO.LoadRequestEvent -= LoadScene;
+        newGameEvent.onEventRaised -= NewGame;
     }
 
     void NewGame()
     {
         SceneToLoad = firstLoadScene;
-        LoadScene(SceneToLoad, firstPosition, true);
+        //LoadScene(SceneToLoad, firstPosition, true);
+        loadEventSO.RaiseLoadRequestEvent(SceneToLoad, firstPosition, true);
     }
 
     private void LoadScene(GameSceneSO locationToLoad, Vector3 posToGo, bool fadeScreen)
@@ -86,6 +95,9 @@ public class SceneLoadManager : MonoBehaviour
         //异步等待并加载
         yield return new WaitForSeconds(fadeDuration);
 
+        //卸载场景，调整血条显示
+        sceneUnloadedEvent.RaiseLoadRequestEvent(SceneToLoad, positionToGo, true);
+
         yield return currentLoadScene.sceneReference.UnLoadScene();
 
         //隐藏玩家
@@ -118,8 +130,10 @@ public class SceneLoadManager : MonoBehaviour
         }
 
         isLoading = false;
-
-        //执行获取相机边界的事件
-        afterSceneLoad.RaiseEvent();
+        if (currentLoadScene.SceneType == SceneType.Location)
+        {
+            //执行获取相机边界的事件
+            afterSceneLoad.RaiseEvent();
+        }
     }
 }

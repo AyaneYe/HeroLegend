@@ -6,6 +6,10 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("事件监听")]
+    public SceneLoadEventSO loadEvent;
+    public VoidEventSO afterSceneLoadEvent;
+
     private PlayerInputController inputControl;
     private Rigidbody2D rb;
     private PhysicsCheck physicsCheck;
@@ -53,11 +57,15 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         inputControl.Enable();
+        loadEvent.LoadRequestEvent += OnLoadEvent;
+        afterSceneLoadEvent.onEventRaised += OnAfterSceneLoadEvent;
     }
 
     private void OnDisable()
     {
         inputControl.Disable();
+        loadEvent.LoadRequestEvent -= OnLoadEvent;
+        afterSceneLoadEvent.onEventRaised -= OnAfterSceneLoadEvent;
     }
 
     private void Update()
@@ -79,6 +87,18 @@ public class PlayerController : MonoBehaviour
         }
 
     }
+
+    private void OnLoadEvent(GameSceneSO arg0, Vector3 arg1, bool arg2)
+    {
+        inputControl.Gameplay.Disable();
+    }
+
+    private void OnAfterSceneLoadEvent()
+    {
+        inputControl.Gameplay.Enable();
+    }
+
+
 
     private void Move()
     {
@@ -120,7 +140,7 @@ public class PlayerController : MonoBehaviour
     {
         if (physicsCheck.isGrounded)
             rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse); //施加一个向上瞬时的力
-            GetComponent<AudioDefination>()?.PlayAudioClip();
+        GetComponent<AudioDefination>()?.PlayAudioClip();
     }
 
     private void PlayerAttack(InputAction.CallbackContext context)

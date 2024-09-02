@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Character : MonoBehaviour
+public class Character : MonoBehaviour, ISaveable
 {
+    [Header("事件监听")]
+    public VoidEventSO newGameEvent;
     [Header("基础信息")]
     public float MaxHealth;
     public float CurrentHealth;
@@ -17,10 +19,29 @@ public class Character : MonoBehaviour
     public UnityEvent<Transform> onTakeDamage;
     public UnityEvent OnDie;
 
-    private void Start()
+    private void NewGame()
     {
         CurrentHealth = MaxHealth;
         onHealthChange?.Invoke(this);
+    }
+
+    private void OnEnable()
+    {
+        newGameEvent.onEventRaised += NewGame;
+        ISaveable saveable = this;
+        saveable.RegisterSaveData();
+    }
+
+    private void OnDisable()
+    {
+        newGameEvent.onEventRaised -= NewGame;
+        ISaveable saveable = this;
+        saveable.UnRegisterSaveData();
+    }
+
+    private void Start()
+    {
+        CurrentHealth = MaxHealth;
     }
 
     private void Update()
@@ -74,6 +95,31 @@ public class Character : MonoBehaviour
         {
             invincible = true;
             invincibleCounter = invincibleTime;
+        }
+    }
+
+    public DataDefination GetDataID()
+    {
+        return GetComponent<DataDefination>();
+    }
+
+    public void GetSaveData(Data data)
+    {
+        if (data.characterPosDict.ContainsKey(GetDataID().ID))
+        {
+            data.characterPosDict[GetDataID().ID] = transform.position;
+        }
+        else
+        {
+            data.characterPosDict.Add(GetDataID().ID, transform.position);
+        }
+    }
+
+    public void LoadData(Data data)
+    {
+        if (data.characterPosDict.ContainsKey(GetDataID().ID))
+        {
+            transform.position = data.characterPosDict[GetDataID().ID];
         }
     }
 }
