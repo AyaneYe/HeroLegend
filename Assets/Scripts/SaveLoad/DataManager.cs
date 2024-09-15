@@ -1,15 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
+[DefaultExecutionOrder(-100)]
 public class DataManager : MonoBehaviour
 {
     public static DataManager instance;
 
     [Header("ÊÂ¼þ¼àÌý")]
     public VoidEventSO saveDataEvent;
+    public VoidEventSO loadDataEvent;
 
-    public List<ISaveable> saveableList = new List<ISaveable>();
+    private List<ISaveable> saveableList = new List<ISaveable>();
 
     private Data saveData;
 
@@ -30,11 +33,21 @@ public class DataManager : MonoBehaviour
     private void OnEnable()
     {
         saveDataEvent.onEventRaised += Save;
+        loadDataEvent.onEventRaised += Load;
     }
 
     private void OnDisable()
     {
         saveDataEvent.onEventRaised -= Save;
+        loadDataEvent.onEventRaised -= Load;
+    }
+
+    private void Update()
+    {
+        if (Keyboard.current.lKey.wasPressedThisFrame)
+        {
+            Load();
+        }
     }
 
     public void RegisterSaveData(ISaveable saveable)
@@ -64,6 +77,9 @@ public class DataManager : MonoBehaviour
 
     public void Load()
     {
-
+        foreach(var saveable in saveableList)
+        {
+            saveable.LoadData(saveData);
+        }
     }
 }

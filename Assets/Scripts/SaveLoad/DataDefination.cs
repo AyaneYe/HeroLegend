@@ -21,4 +21,9 @@ public class DataDefination : MonoBehaviour
             ID = string.Empty;
         }
     }
+
+    public void RecreateGUID()
+    {
+        ID = System.Guid.NewGuid().ToString();
+    }
 }

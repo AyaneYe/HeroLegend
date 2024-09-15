@@ -6,7 +6,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
 
-public class SceneLoadManager : MonoBehaviour
+public class SceneLoadManager : MonoBehaviour, ISaveable
 {
     public Transform playerTransform;
     [Header("场景")]
@@ -17,6 +17,7 @@ public class SceneLoadManager : MonoBehaviour
     [Header("事件监听")]
     public SceneLoadEventSO loadEventSO;
     public VoidEventSO newGameEvent;
+    public VoidEventSO backToMenuEvent;
     [Header("广播")]
     public VoidEventSO afterSceneLoad;
     public FadeEventSO fadeEvent;
@@ -47,12 +48,27 @@ public class SceneLoadManager : MonoBehaviour
     {
         loadEventSO.LoadRequestEvent += LoadScene;
         newGameEvent.onEventRaised += NewGame;
+        backToMenuEvent.onEventRaised += OnBackToMenuEvent;
+
+        ISaveable saveable = this;
+        saveable.RegisterSaveData();
     }
 
     private void OnDisable()
     {
         loadEventSO.LoadRequestEvent -= LoadScene;
         newGameEvent.onEventRaised -= NewGame;
+        backToMenuEvent.onEventRaised -= OnBackToMenuEvent;
+
+
+        ISaveable saveable = this;
+        saveable.UnRegisterSaveData();
+    }
+
+    private void OnBackToMenuEvent()
+    {
+        SceneToLoad = menuScene;
+        loadEventSO.RaiseLoadRequestEvent(SceneToLoad, menuPosition, true);
     }
 
     void NewGame()
@@ -134,6 +150,28 @@ public class SceneLoadManager : MonoBehaviour
         {
             //执行获取相机边界的事件
             afterSceneLoad.RaiseEvent();
+        }
+    }
+
+    public DataDefination GetDataID()
+    {
+        return GetComponent<DataDefination>();
+    }
+
+    public void GetSaveData(Data data)
+    {
+        data.SaveGameScene(currentLoadScene);
+    }
+
+    public void LoadData(Data data)
+    {
+        var PlayerID = playerTransform.GetComponent<DataDefination>().ID;
+        if (data.characterPosDict.ContainsKey(PlayerID))
+        {
+            positionToGo = data.characterPosDict[PlayerID];
+            SceneToLoad = data.GetSavedScene();
+
+            LoadScene(SceneToLoad, positionToGo, true);
         }
     }
 }

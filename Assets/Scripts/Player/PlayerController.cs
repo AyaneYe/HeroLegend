@@ -7,8 +7,10 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [Header("ÊÂ¼þ¼àÌý")]
-    public SceneLoadEventSO loadEvent;
+    public SceneLoadEventSO sceneLoadEvent;
     public VoidEventSO afterSceneLoadEvent;
+    public VoidEventSO loadDataEvent;
+    public VoidEventSO backToMenuEvent;
 
     private PlayerInputController inputControl;
     private Rigidbody2D rb;
@@ -51,21 +53,26 @@ public class PlayerController : MonoBehaviour
 
         //¹¥»÷
         inputControl.Gameplay.Attack.started += PlayerAttack;
+        inputControl.Enable();
     }
 
 
     private void OnEnable()
     {
-        inputControl.Enable();
-        loadEvent.LoadRequestEvent += OnLoadEvent;
+        sceneLoadEvent.LoadRequestEvent += OnLoadEvent;
         afterSceneLoadEvent.onEventRaised += OnAfterSceneLoadEvent;
+        loadDataEvent.onEventRaised += OnLoadDataEvent;
+        backToMenuEvent.onEventRaised += OnLoadDataEvent;
     }
+
 
     private void OnDisable()
     {
         inputControl.Disable();
-        loadEvent.LoadRequestEvent -= OnLoadEvent;
+        sceneLoadEvent.LoadRequestEvent -= OnLoadEvent;
         afterSceneLoadEvent.onEventRaised -= OnAfterSceneLoadEvent;
+        loadDataEvent.onEventRaised -= OnLoadDataEvent;
+        backToMenuEvent.onEventRaised -= OnLoadDataEvent;
     }
 
     private void Update()
@@ -92,6 +99,12 @@ public class PlayerController : MonoBehaviour
     {
         inputControl.Gameplay.Disable();
     }
+
+    private void OnLoadDataEvent()
+    {
+        isDead = false;
+    }
+
 
     private void OnAfterSceneLoadEvent()
     {
